@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Resume Builder</h1>
+    </header>
+    <main>
+        <section id="personal-info">
+            <h2>Personal Information</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter your name"><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email"><br>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" placeholder="Enter your phone number"><br>
+            <label for="address">Address:</label>
+            <textarea id="address" placeholder="Enter your address"></textarea><br>
+            <label for="profile-img">Profile Image:</label>
+            <input type="file" id="profile-img" accept="image/*">
+        </section>
+        <section id="education">
+            <h2>Education</h2>
+            <div id="education-fields">
+                <div class="education-field">
+                    <label for="school">School/University:</label>
+                    <input type="text" class="school" placeholder="Enter your school/university"><br>
+                    <label for="degree">Degree:</label>
+                    <input type="text" class="degree" placeholder="Enter your degree"><br>
+                    <label for="year">Year of Graduation:</label>
+                    <input type="number" class="year" placeholder="Enter year of graduation">
+                </div>
+            </div>
+            <button class="add-field-btn" onclick="addField('education-fields', 'education-field')">Add Education</button>
+        </section>
+        <section id="experience">
+            <h2>Work Experience</h2>
+            <div id="experience-fields">
+                <div class="experience-field">
+                    <label for="company">Company:</label>
+                    <input type="text" class="company" placeholder="Enter company name"><br>
+                    <label for="position">Position:</label>
+                    <input type="text" class="position" placeholder="Enter your position"><br>
+                    <label for="duration">Duration:</label>
+                    <input type="text" class="duration" placeholder="Enter duration (e.g., 2018-2020)">
+                </div>
+            </div>
+            <button class="add-field-btn" onclick="addField('experience-fields', 'experience-field')">Add Experience</button>
+        </section>
+        <section id="skills">
+            <h2>Skills</h2>
+            <div id="skills-fields">
+                <div class="skill-field">
+                    <input type="text" class="skill" placeholder="Enter skill">
+                </div>
+            </div>
+            <button class="add-field-btn" onclick="addField('skills-fields', 'skill-field')">Add Skill</button>
+        </section>
+        <button id="generate-btn">Generate Resume PDF</button>
+    </main>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+    <script src="scripts/script.js"></script>
+</body>
+</html>
