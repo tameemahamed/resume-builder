@@ -1,6 +1,6 @@
 // Function to handle form submission and generate resume PDF
 function generateResume() {
-    // Initialize jsPDF
+    let y = 70;
     var doc = new jsPDF();
 
     // Retrieve data from personal information section
@@ -10,101 +10,164 @@ function generateResume() {
         phone: document.getElementById('phone').value,
         address: document.getElementById('address').value
     };
+    // Set background color
+    doc.setFillColor(178,190,181); // ash................
+    doc.rect(0, 0, 210, 297, 'F');
 
-    // Set font style for the document
-    doc.setFont("helvetica");
-    doc.setFontSize(20);
-    doc.text(20, 20, `Resume for ${personalInfo.name}`);
+    // Add profile image
+    let profileImg = document.getElementById('profile-img').files[0];
+    let defaultImg = 'images/default-avatar.jpg';
 
-    // Format and add personal information to the PDF
-    let y = 40;
-    doc.setFontSize(14);
-    doc.text(20, y, `Email: ${personalInfo.email}`);
-    y += 10;
-    doc.text(20, y, `Phone: ${personalInfo.phone}`);
-    y += 10;
-    doc.text(20, y, `Address: ${personalInfo.address}`);
-    y += 20;
+    let addProfileImage = (base64Image) => {
+        doc.addImage(base64Image, 'JPEG', 150, 10, 50, 50);
+        finalizeResume();
+    };
 
-    // Retrieve data from education section
-    let educationFields = document.querySelectorAll('#education-fields .education-field');
-    let educations = [];
-    educationFields.forEach((field, index) => {
-        let school = field.querySelector('.school').value;
-        let degree = field.querySelector('.degree').value;
-        let year = field.querySelector('.year').value;
-        if (school !== '' && degree !== '' && year !== '') {
-            educations.push({
-                school: school,
-                degree: degree,
-                year: year
-            });
-            // Add education details to the PDF
-            doc.setFontStyle("bold");
-            doc.text(20, y, `Education ${index + 1}: ${degree} in ${school} (${year})`);
-            y += 10;
-            doc.setFontStyle("normal");
-        }
-    });
+    if (profileImg) {
+        let reader = new FileReader();
+        reader.onload = function (event) {
+            addProfileImage(event.target.result);
+        };
+        reader.readAsDataURL(profileImg);
+    } else {
+        loadDefaultImage(defaultImg, addProfileImage);
+    }
 
-    y += 10;
+    function loadDefaultImage(url, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            let reader = new FileReader();
+            reader.onloadend = function () {
+                callback(reader.result);
+            };
+            reader.readAsDataURL(xhr.response);
+        };
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+    }
 
-    // Retrieve data from experience section
-    let experienceFields = document.querySelectorAll('#experience-fields .experience-field');
-    let experiences = [];
-    experienceFields.forEach((field, index) => {
-        let company = field.querySelector('.company').value;
-        let position = field.querySelector('.position').value;
-        let duration = field.querySelector('.duration').value;
-        if (company !== '' && position !== '' && duration !== '') {
-            experiences.push({
-                company: company,
-                position: position,
-                duration: duration
-            });
-            // Add experience details to the PDF
-            doc.setFontStyle("bold");
-            doc.text(20, y, `Experience ${index + 1}: ${position} at ${company} (${duration})`);
-            y += 10;
-            doc.setFontStyle("normal");
-        }
-    });
+    function finalizeResume() {
+        
 
-    y += 10;
+        // Set font style and add personal information
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(24);
+        doc.setTextColor(0, 0, 128); // dark blue
+        doc.text(20, 30, `${personalInfo.name}`);
 
-    // Retrieve data from skills section
-    let skillFields = document.querySelectorAll('#skills-fields .skill-field');
-    let skills = [];
-    skillFields.forEach((field, index) => {
-        let skill = field.querySelector('.skill').value;
-        if (skill !== '') {
-            skills.push(skill);
-            // Add skills to the PDF
-            doc.text(20, y, `- ${skill}`);
-            y += 10;
-        }
-    });
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0); // black
+        doc.setFont("helvetica", "normal");
+        
+        doc.setFont("helvetica", "bold");
+        doc.text(20, y, `Email: `);
+        doc.setFont("helvetica", "normal");
+        doc.text(42, y, `${personalInfo.email}`);
+        y += 10;
 
-    // Save the PDF with a filename based on the user's name
-    doc.save(`resume_${personalInfo.name.replace(/\s+/g, '_').toLowerCase()}.pdf`);
-    // Add a line break
-    y += 10;
+        doc.setFont("helvetica", "bold");
+        doc.text(20, y, `Phone: `);
+        doc.setFont("helvetica", "normal");
+        doc.text(42, y, `${personalInfo.phone}`);
+        y += 10;
 
-    // Add a button to generate the PDF
-    doc.text(20, y, "Generated using Resume Builder");
-    y += 10;
+        doc.setFont("helvetica", "bold");
+        doc.text(20, y, `Address: `);
+        doc.setFont("helvetica", "normal");
+        doc.text(42, y, `${personalInfo.address}`);
+        y += 20;
 
-    // Output the PDF as data URI
-    doc.output('dataurlnewwindow');
+        // Add education details
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.setTextColor(0, 0, 128); // dark blue
+        doc.text(20, y, "Education");
+        y += 10;
 
-    // Example of console logging the generated resume data
-    console.log("Resume Generated:");
-    console.log("Personal Information:", personalInfo);
-    console.log("Educations:", educations);
-    console.log("Experiences:", experiences);
-    console.log("Skills:", skills);
+        let educationFields = document.querySelectorAll('#education-fields .education-field');
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0); // black
+        doc.setFont("helvetica", "normal");
+        educationFields.forEach((field, index) => {
+            let school = field.querySelector('.school').value;
+            let degree = field.querySelector('.degree').value;
+            let year = field.querySelector('.year').value;
+            if (school !== '' && degree !== '' && year !== '') {
+                doc.text(20, y, `-------------------------------------------------------------------------------------------------------------`);
+                y += 5;
+                doc.setFont("helvetica", "bold");
+                doc.text(30, y, `${degree}`);
+                y += 10;
+                doc.setFont("helvetica", "normal");
+                doc.text(30, y, `${school}`);
+                y += 10;
+                doc.text(30, y, `Passing Year: ${year}`);
+                y += 5;
+            }
+        });
+        doc.text(20, y, `-------------------------------------------------------------------------------------------------------------`);
+        y += 15;
 
-    // You can further process this data to generate a formatted resume or output HTML
+        // Add experience details
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.setTextColor(0, 0, 128); // dark blue
+        doc.text(20, y, "Work Experience");
+        y += 10;
+
+        let experienceFields = document.querySelectorAll('#experience-fields .experience-field');
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0); // black
+        doc.setFont("helvetica", "normal");
+        experienceFields.forEach((field, index) => {
+            let company = field.querySelector('.company').value;
+            let position = field.querySelector('.position').value;
+            let duration = field.querySelector('.duration').value;
+            if (company !== '' && position !== '' && duration !== '') {
+                doc.text(30, y, `- ${position} at ${company} for ${duration} years`);
+                y += 10;
+            }
+        });
+        
+        //Add New Page
+        doc.addPage();
+        doc.setFillColor(178,190,181); // ash................
+        doc.rect(0, 0, 210, 297, 'F');
+        y=20;
+
+
+        // Add skills
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.setTextColor(0, 0, 128); // dark blue
+        doc.text(20, y, "Skills");
+        y += 10;
+        let skillFields = document.querySelectorAll('#skills-fields .skill-field');
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0); // black
+        doc.setFont("helvetica", "normal");
+        skillFields.forEach((field, index) => {
+            let skill = field.querySelector('.skill').value;
+            if (skill !== '') {
+                doc.text(30, y, `- ${skill}`);
+                y += 10;
+            }
+        });
+
+
+        // Add footer note
+        y = doc.internal.pageSize.height - 20;
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(10);
+        doc.setTextColor(128, 128, 128); // grey
+        doc.text(20, y, "made by tameem ahamed");
+
+        // Save the PDF with a filename based on the user's name
+        doc.save(`resume_${personalInfo.name.replace(/\s+/g, '_').toLowerCase()}.pdf`);
+        
+    
+    }
 }
 
 // Function to add new fields dynamically
@@ -148,18 +211,3 @@ function removeField(button) {
 
 // Event listener for the Generate Resume button
 document.getElementById('generate-btn').addEventListener('click', generateResume);
-
-// Event listener for Add Education button
-document.getElementById('add-education-btn').addEventListener('click', function() {
-    addField('education-fields', 'education-field');
-});
-
-// Event listener for Add Experience button
-document.getElementById('add-experience-btn').addEventListener('click', function() {
-    addField('experience-fields', 'experience-field');
-});
-
-// Event listener for Add Skill button
-document.getElementById('add-skill-btn').addEventListener('click', function() {
-    addField('skills-fields', 'skill-field');
-});
