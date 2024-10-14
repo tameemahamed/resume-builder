@@ -11,7 +11,7 @@ function generateResume() {
         address: document.getElementById('address').value
     };
     // Set background color
-    doc.setFillColor(178,190,181); // ash................
+    doc.setFillColor(255,255,255); 
     doc.rect(0, 0, 210, 297, 'F');
 
     // Add profile image
@@ -130,12 +130,6 @@ function generateResume() {
             }
         });
         
-        //Add New Page
-        doc.addPage();
-        doc.setFillColor(178,190,181); // ash................
-        doc.rect(0, 0, 210, 297, 'F');
-        y=20;
-
 
         // Add skills
         doc.setFont("helvetica", "bold");
@@ -147,11 +141,18 @@ function generateResume() {
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0); // black
         doc.setFont("helvetica", "normal");
+        let x=20;
+        let i=0;
+        let ch='';
+        const charWidth = 2;
         skillFields.forEach((field, index) => {
             let skill = field.querySelector('.skill').value;
             if (skill !== '') {
-                doc.text(30, y, `- ${skill}`);
-                y += 10;
+                console.log(x);
+                doc.text(x, y, `${ch}${skill}` );
+                if(ch.length==0) ch=' ';
+                x += (skill.length +ch.length) * charWidth;
+                ch=', ';
             }
         });
 
